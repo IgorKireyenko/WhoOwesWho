@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="WhoOwesWho.Api/WhoOwesWho.Api.csproj" />
+  <Project Path="WhoOwesWho.UI/WhoOwesWho.UI.csproj" />
+</Solution>
