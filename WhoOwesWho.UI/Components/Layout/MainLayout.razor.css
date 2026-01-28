@@ -18,3 +18,26 @@
         right: 0.75rem;
         top: 0.5rem;
     }
+
+.wow-navbar {
+    background-color: #5b2fbf;
+}
+
+.wow-navbar .navbar-brand,
+.wow-navbar .nav-link {
+    color: #fff;
+}
+
+.wow-navbar .nav-link.active,
+.wow-navbar .nav-link:hover,
+.wow-navbar .nav-link:focus {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.wow-navbar .navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.35);
+}
+
+.wow-navbar .navbar-toggler-icon {
+    filter: invert(1);
+}

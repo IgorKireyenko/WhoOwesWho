@@ -1,6 +1,36 @@
 ﻿@inherits LayoutComponentBase
 
-@Body
+<header>
+    <nav class="navbar navbar-expand-lg wow-navbar" aria-label="Primary navigation">
+        <div class="container-fluid">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <img src="/images/logo.png" alt="WhoOwesWho" height="48" class="me-2" />
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#primaryNavbar" aria-controls="primaryNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="primaryNavbar">
+                <ul class="navbar-nav ms-3 me-auto mb-2 mb-lg-0 gap-lg-2">
+                    <li class="nav-item">
+                        <NavLink class="nav-link text-white" href="/" Match="NavLinkMatch.All">Home</NavLink>
+                    </li>
+                </ul>
+
+                <ul class="navbar-nav mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<main class="container py-3">
+    @Body
+</main>
 
 <div id="blazor-error-ui" data-nosnippet>
     An unhandled error has occurred.

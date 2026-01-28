@@ -34,7 +34,10 @@ cd C:\Projects\Godel\WhoOwesWho
   - `[ApiController]` + `[Route("[controller]")]`.
 - There’s a sample request file at `WhoOwesWho.Api/WhoOwesWho.Api.http` (uses `http://localhost:5275/weatherforecast`).
 
+
 ## UI conventions (current)
+
+- Use Bootstrap 5.3 for all UI components and styling. Follow Bootstrap 5.3 conventions for layout, components, and responsive design.
 
 - Blazor Server setup in `WhoOwesWho.UI/Program.cs`:
   - `AddRazorComponents().AddInteractiveServerComponents()`.
