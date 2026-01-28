@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="WhoOwesWho.Api/WhoOwesWho.Api.csproj" />
+  <Project Path="WhoOwesWho.Common/WhoOwesWho.Common.csproj" Id="af8fedc0-2b79-4d0b-8934-119696418b25" />
   <Project Path="WhoOwesWho.UI/WhoOwesWho.UI.csproj" />
 </Solution>
