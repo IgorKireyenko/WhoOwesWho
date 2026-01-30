@@ -1,0 +1,78 @@
+@page "/signup"
+@layout Layout.AuthLayout
+
+<PageTitle>Sign up</PageTitle>
+
+<div class="card shadow-sm wow-auth-card">
+    <div class="card-body p-4">
+        <h1 class="h4 mb-3">Create account</h1>
+        <p class="text-body-secondary mb-4">Join to start tracking shared expenses.</p>
+
+        <EditForm Model="Model" OnValidSubmit="HandleValidSubmit" FormName="signup">
+            <DataAnnotationsValidator />
+            <ValidationSummary class="mb-3" />
+
+            <div class="mb-3">
+                <label class="form-label" for="fullName">Full name</label>
+                <InputText id="fullName" class="form-control" @bind-Value="Model.FullName" autocomplete="name" />
+                <ValidationMessage For="() => Model.FullName" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="email">Email</label>
+                <InputText id="email" class="form-control" @bind-Value="Model.Email" autocomplete="email" inputmode="email" />
+                <ValidationMessage For="() => Model.Email" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="password">Password</label>
+                <InputText id="password" type="password" class="form-control" @bind-Value="Model.Password" autocomplete="new-password" />
+                <div class="form-text">Minimum 8 characters.</div>
+                <ValidationMessage For="() => Model.Password" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="confirmPassword">Confirm password</label>
+                <InputText id="confirmPassword" type="password" class="form-control" @bind-Value="Model.ConfirmPassword" autocomplete="new-password" />
+                <ValidationMessage For="() => Model.ConfirmPassword" />
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 wow-auth-btn">Create account</button>
+        </EditForm>
+
+        <hr class="my-4" />
+
+        <div class="d-flex flex-column flex-sm-row justify-content-between gap-2">
+            <a class="wow-auth-link" href="/login">Already have an account? Log in</a>
+        </div>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    public SignupModel Model { get; set; } = new();
+
+    private Task HandleValidSubmit()
+    {
+        return Task.CompletedTask;
+    }
+
+    public sealed class SignupModel
+    {
+        [Required]
+        [MinLength(2)]
+        public string FullName { get; set; } = string.Empty;
+
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty;
+
+        [Required]
+        [MinLength(8)]
+        public string Password { get; set; } = string.Empty;
+
+        [Required]
+        [Compare(nameof(Password), ErrorMessage = "Passwords do not match.")]
+        public string ConfirmPassword { get; set; } = string.Empty;
+    }
+}

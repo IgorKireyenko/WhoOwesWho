@@ -2,6 +2,11 @@ h1:focus {
     outline: none;
 }
 
+:root {
+    --wow-primary: #5b2fbf;
+    --wow-primary-hover: #4a25a0;
+}
+
 .valid.modified:not([type=checkbox]) {
     outline: 1px solid #26b050;
 }

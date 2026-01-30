@@ -1,0 +1,25 @@
+@page "/logout"
+@layout Layout.AuthLayout
+
+<PageTitle>Logout</PageTitle>
+
+<div class="card shadow-sm wow-auth-card">
+    <div class="card-body p-4">
+        <h1 class="h4 mb-3">Logout</h1>
+        <p class="text-body-secondary mb-4">This will sign you out of the application.</p>
+
+        <div class="d-grid gap-2">
+            <button type="button" class="btn btn-primary wow-auth-btn" @onclick="HandleLogout">
+                Sign out
+            </button>
+            <a class="btn btn-outline-secondary" href="/">Cancel</a>
+        </div>
+    </div>
+</div>
+
+@code {
+    private Task HandleLogout()
+    {
+        return Task.CompletedTask;
+    }
+}

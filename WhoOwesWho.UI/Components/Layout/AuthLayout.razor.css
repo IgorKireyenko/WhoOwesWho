@@ -1,0 +1,34 @@
+.wow-auth-container {
+    max-width: 420px;
+}
+
+::deep .wow-auth-card {
+    border: 2px solid var(--wow-primary);
+    border-radius: 1rem;
+}
+
+::deep .wow-auth-btn {
+    --bs-btn-bg: var(--wow-primary);
+    --bs-btn-border-color: var(--wow-primary);
+    --bs-btn-hover-bg: var(--wow-primary-hover);
+    --bs-btn-hover-border-color: var(--wow-primary-hover);
+    --bs-btn-focus-shadow-rgb: 91, 47, 191;
+
+    background-color: var(--wow-primary);
+    border-color: var(--wow-primary);
+}
+
+::deep .wow-auth-btn:hover,
+::deep .wow-auth-btn:focus {
+    background-color: var(--wow-primary-hover);
+    border-color: var(--wow-primary-hover);
+}
+
+::deep .wow-auth-link {
+    color: var(--wow-primary);
+}
+
+::deep .wow-auth-link:hover,
+::deep .wow-auth-link:focus {
+    color: var(--wow-primary-hover);
+}

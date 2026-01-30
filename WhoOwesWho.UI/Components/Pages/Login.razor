@@ -1,0 +1,57 @@
+@page "/login"
+@layout Layout.AuthLayout
+
+<PageTitle>Login</PageTitle>
+
+<div class="card shadow-sm wow-auth-card">
+    <div class="card-body p-4">
+        <h1 class="h4 mb-3">Login</h1>
+        <p class="text-body-secondary mb-4">Welcome back. Please sign in to continue.</p>
+
+        <EditForm Model="Model" OnValidSubmit="HandleValidSubmit" FormName="login">
+            <DataAnnotationsValidator />
+            <ValidationSummary class="mb-3" />
+
+            <div class="mb-3">
+                <label class="form-label" for="email">Email</label>
+                <InputText id="email" class="form-control" @bind-Value="Model.Email" autocomplete="email" inputmode="email" />
+                <ValidationMessage For="() => Model.Email" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="password">Password</label>
+                <InputText id="password" type="password" class="form-control" @bind-Value="Model.Password" autocomplete="current-password" />
+                <ValidationMessage For="() => Model.Password" />
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 wow-auth-btn">Log in</button>
+        </EditForm>
+
+        <hr class="my-4" />
+
+        <div class="d-flex flex-column flex-sm-row justify-content-between gap-2">
+            <a class="wow-auth-link" href="/signup">Don't have an account? Sign up</a>
+        </div>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    public LoginModel Model { get; set; } = new();
+
+    private Task HandleValidSubmit()
+    {
+        return Task.CompletedTask;
+    }
+
+    public sealed class LoginModel
+    {
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty;
+
+        [Required]
+        [MinLength(8)]
+        public string Password { get; set; } = string.Empty;
+    }
+}
