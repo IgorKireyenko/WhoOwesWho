@@ -1,12 +1,24 @@
 @page "/signup"
 @layout Layout.AuthLayout
 
+@using WhoOwesWho.Common.Auth.Dto
+@using WhoOwesWho.UI.Auth
+@inject IAuthApiClient AuthApi
+@inject NavigationManager Navigation
+
 <PageTitle>Sign up</PageTitle>
 
 <div class="card shadow-sm wow-auth-card">
     <div class="card-body p-4">
         <h1 class="h4 mb-3">Create account</h1>
         <p class="text-body-secondary mb-4">Join to start tracking shared expenses.</p>
+
+        @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+        {
+            <div class="alert alert-danger" role="alert">
+                @ErrorMessage
+            </div>
+        }
 
         <EditForm Model="Model" OnValidSubmit="HandleValidSubmit" FormName="signup">
             <DataAnnotationsValidator />
@@ -52,9 +64,24 @@
     [SupplyParameterFromForm]
     public SignupModel Model { get; set; } = new();
 
-    private Task HandleValidSubmit()
+    private string? ErrorMessage { get; set; }
+
+    private async Task HandleValidSubmit()
     {
-        return Task.CompletedTask;
+        ErrorMessage = null;
+
+        try
+        {
+            await AuthApi.SignUpAsync(
+                new SignUpRequestDto(Model.Email, Model.Password),
+                CancellationToken.None);
+
+            Navigation.NavigateTo("/login");
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+        }
     }
 
     public sealed class SignupModel

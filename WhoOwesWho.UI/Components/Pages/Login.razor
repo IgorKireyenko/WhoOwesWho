@@ -1,12 +1,24 @@
 @page "/login"
 @layout Layout.AuthLayout
 
+@using WhoOwesWho.Common.Auth.Dto
+@using WhoOwesWho.UI.Auth
+@inject IAuthApiClient AuthApi
+@inject NavigationManager Navigation
+
 <PageTitle>Login</PageTitle>
 
 <div class="card shadow-sm wow-auth-card">
     <div class="card-body p-4">
         <h1 class="h4 mb-3">Login</h1>
         <p class="text-body-secondary mb-4">Welcome back. Please sign in to continue.</p>
+
+        @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+        {
+            <div class="alert alert-danger" role="alert">
+                @ErrorMessage
+            </div>
+        }
 
         <EditForm Model="Model" OnValidSubmit="HandleValidSubmit" FormName="login">
             <DataAnnotationsValidator />
@@ -39,9 +51,24 @@
     [SupplyParameterFromForm]
     public LoginModel Model { get; set; } = new();
 
-    private Task HandleValidSubmit()
+    private string? ErrorMessage { get; set; }
+
+    private async Task HandleValidSubmit()
     {
-        return Task.CompletedTask;
+        ErrorMessage = null;
+
+        try
+        {
+            _ = await AuthApi.LoginAsync(
+                new LoginRequestDto(Model.Email, Model.Password),
+                CancellationToken.None);
+
+            Navigation.NavigateTo("/");
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+        }
     }
 
     public sealed class LoginModel
