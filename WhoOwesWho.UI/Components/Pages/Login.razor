@@ -4,6 +4,7 @@
 @using WhoOwesWho.Common.Auth.Dto
 @using WhoOwesWho.UI.Auth
 @inject IAuthApiClient AuthApi
+@inject ICookieAuthenticationService CookieAuth
 @inject NavigationManager Navigation
 
 <PageTitle>Login</PageTitle>
@@ -59,11 +60,13 @@
 
         try
         {
-            _ = await AuthApi.LoginAsync(
+            var loginResponse = await AuthApi.LoginAsync(
                 new LoginRequestDto(Model.Email, Model.Password),
                 CancellationToken.None);
 
-            Navigation.NavigateTo("/");
+            await CookieAuth.SignInAsync(loginResponse);
+
+            Navigation.NavigateTo("/", forceLoad: true);
         }
         catch (Exception ex)
         {

@@ -1,5 +1,8 @@
 @page "/logout"
 @layout Layout.AuthLayout
+@using WhoOwesWho.UI.Auth
+@inject ICookieAuthenticationService CookieAuth
+@inject NavigationManager Navigation
 
 <PageTitle>Logout</PageTitle>
 
@@ -8,18 +11,21 @@
         <h1 class="h4 mb-3">Logout</h1>
         <p class="text-body-secondary mb-4">This will sign you out of the application.</p>
 
-        <div class="d-grid gap-2">
-            <button type="button" class="btn btn-primary wow-auth-btn" @onclick="HandleLogout">
-                Sign out
-            </button>
-            <a class="btn btn-outline-secondary" href="/">Cancel</a>
-        </div>
+        <EditForm Model="@(new object())" OnValidSubmit="HandleLogout" FormName="logout">
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary wow-auth-btn">
+                    Sign out
+                </button>
+                <a class="btn btn-outline-secondary" href="/">Cancel</a>
+            </div>
+        </EditForm>
     </div>
 </div>
 
 @code {
-    private Task HandleLogout()
+    private async Task HandleLogout()
     {
-        return Task.CompletedTask;
+        await CookieAuth.SignOutAsync();
+        Navigation.NavigateTo("/login", forceLoad: true);
     }
 }
