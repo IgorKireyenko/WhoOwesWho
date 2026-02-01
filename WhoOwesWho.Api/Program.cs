@@ -15,6 +15,7 @@ builder.Services.AddSingleton<WhoOwesWho.Api.Auth.Repositories.IUserRepository, 
 builder.Services.AddSingleton<WhoOwesWho.Api.Auth.Services.IPasswordHasher, WhoOwesWho.Api.Auth.Services.Pbkdf2PasswordHasher>();
 builder.Services.AddSingleton<WhoOwesWho.Api.Auth.Services.ITokenService, WhoOwesWho.Api.Auth.Services.JwtTokenService>();
 builder.Services.AddScoped<WhoOwesWho.Api.Auth.Services.IAuthService, WhoOwesWho.Api.Auth.Services.AuthService>();
+builder.Services.AddSingleton<WhoOwesWho.Api.Data.DataSeeder>();
 
 builder.Services
     .AddAuthentication(Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)
@@ -39,6 +40,13 @@ builder.Services
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
+
+// Seed test data
+using (var scope = app.Services.CreateScope())
+{
+    var seeder = scope.ServiceProvider.GetRequiredService<WhoOwesWho.Api.Data.DataSeeder>();
+    await seeder.SeedAsync();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
