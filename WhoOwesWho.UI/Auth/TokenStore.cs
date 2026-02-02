@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Components.Authorization;
 
 namespace WhoOwesWho.UI.Auth;
 
-public sealed class TokenStore(AuthenticationStateProvider authenticationStateProvider) : ITokenStore
+public sealed class TokenStore(
+    AuthenticationStateProvider authenticationStateProvider,
+    IHttpContextAccessor httpContextAccessor) : ITokenStore
 {
     private static readonly ConcurrentDictionary<string, string> Tokens = new();
 
@@ -37,16 +39,15 @@ public sealed class TokenStore(AuthenticationStateProvider authenticationStatePr
         }
     }
 
-    private async Task<string?> GetCurrentUserIdAsync()
+    private Task<string?> GetCurrentUserIdAsync()
     {
-        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-
-        if (!user.Identity?.IsAuthenticated ?? true)
+        var httpContext = httpContextAccessor.HttpContext;
+        if (httpContext?.User.Identity?.IsAuthenticated != true)
         {
-            return null;
+            return Task.FromResult<string?>(null);
         }
 
-        return user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        var userId = httpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        return Task.FromResult(userId);
     }
 }

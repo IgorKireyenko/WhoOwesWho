@@ -39,6 +39,8 @@ public sealed class CookieAuthenticationService(
                 ExpiresUtc = loginResponse.ExpiresAt
             });
 
+        httpContext.User = claimsPrincipal;
+
         await tokenStore.SetTokenAsync(loginResponse.AccessToken);
     }
 
