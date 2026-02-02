@@ -1,22 +1,26 @@
-.group-details-page {
-    max-width: 1200px;
+.new-group-page {
+    max-width: 800px;
     margin: 0 auto;
     padding: 2rem 1rem;
 }
 
-.group-details-page h1 {
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--wow-primary);
+.new-group-page .card {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.new-group-page .form-label {
+    font-weight: 500;
+}
+
+.new-group-page .validation-message {
+    color: var(--bs-danger);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
 }
 
 @media (max-width: 768px) {
-    .group-details-page {
+    .new-group-page {
         padding: 1rem 0.5rem;
-    }
-
-    .group-details-page h1 {
-        font-size: 1.5rem;
     }
 
     .d-flex.justify-content-between.align-items-center {
@@ -29,3 +33,4 @@
         width: 100%;
     }
 }
+

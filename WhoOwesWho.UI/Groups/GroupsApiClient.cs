@@ -8,12 +8,16 @@ namespace WhoOwesWho.UI.Groups;
 
 public interface IGroupsApiClient
 {
+    Task<CreateGroupResponseDto> CreateGroupAsync(CreateGroupRequestDto request, CancellationToken cancellationToken);
     Task<List<GroupSummaryDto>> GetAllGroupsAsync(CancellationToken cancellationToken);
     Task<GroupDetailsResponseDto> GetGroupDetailsAsync(Guid groupId, CancellationToken cancellationToken);
 }
 
 public sealed class GroupsApiClient(HttpClient httpClient, IOptions<GroupsApiOptions> options, ITokenStore tokenStore) : IGroupsApiClient
 {
+    public Task<CreateGroupResponseDto> CreateGroupAsync(CreateGroupRequestDto request, CancellationToken cancellationToken)
+        => PostOrThrowAsync<CreateGroupRequestDto, CreateGroupResponseDto>("api/groups", request, cancellationToken);
+
     public Task<List<GroupSummaryDto>> GetAllGroupsAsync(CancellationToken cancellationToken)
         => GetOrThrowAsync<List<GroupSummaryDto>>("api/groups", cancellationToken);
 
@@ -26,6 +30,28 @@ public sealed class GroupsApiClient(HttpClient httpClient, IOptions<GroupsApiOpt
         await EnsureAuthenticatedAsync(cancellationToken);
 
         using var response = await httpClient.GetAsync(relativeUrl, cancellationToken);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var payload = await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken: cancellationToken);
+            return payload ?? throw new InvalidOperationException("The server returned an empty response.");
+        }
+
+        var error = await response.Content.ReadAsStringAsync(cancellationToken);
+        if (string.IsNullOrWhiteSpace(error))
+        {
+            error = $"Request failed ({(int)response.StatusCode} {response.ReasonPhrase}).";
+        }
+
+        throw new InvalidOperationException(error);
+    }
+
+    private async Task<TResponse> PostOrThrowAsync<TRequest, TResponse>(string relativeUrl, TRequest request, CancellationToken cancellationToken)
+    {
+        EnsureConfigured();
+        await EnsureAuthenticatedAsync(cancellationToken);
+
+        using var response = await httpClient.PostAsJsonAsync(relativeUrl, request, cancellationToken);
 
         if (response.IsSuccessStatusCode)
         {

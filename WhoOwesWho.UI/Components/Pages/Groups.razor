@@ -1,16 +1,21 @@
 @page "/groups"
 @attribute [Authorize]
+@rendermode InteractiveServer
 @using WhoOwesWho.Common.Groups.Dto
 @using WhoOwesWho.UI.Components.Shared
 @using WhoOwesWho.UI.Groups
 @inject IGroupsApiClient GroupsApiClient
+@inject NavigationManager NavigationManager
 
 <PageTitle>Groups</PageTitle>
 
 <div class="groups-page">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>My Groups</h1>
-    </div>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>My Groups</h1>
+    <button class="btn btn-primary" @onclick="NavigateToNewGroup">
+        <i class="bi bi-plus-lg"></i> New group
+    </button>
+</div>
 
     @if (isLoading)
     {
@@ -84,5 +89,10 @@
         {
             isLoading = false;
         }
+    }
+
+    private void NavigateToNewGroup()
+    {
+        NavigationManager.NavigateTo("/groups/new");
     }
 }
