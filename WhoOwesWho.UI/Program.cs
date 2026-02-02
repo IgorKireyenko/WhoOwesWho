@@ -1,5 +1,6 @@
 using WhoOwesWho.UI.Components;
 using WhoOwesWho.UI.Auth;
+using WhoOwesWho.UI.Groups;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +29,12 @@ builder.Services.AddOptions<AuthApiOptions>()
 builder.Services.AddHttpClient<IAuthApiClient, AuthApiClient>();
 builder.Services.AddScoped<ITokenStore, TokenStore>();
 builder.Services.AddScoped<ICookieAuthenticationService, CookieAuthenticationService>();
+
+builder.Services.AddOptions<GroupsApiOptions>()
+    .Bind(builder.Configuration.GetSection(GroupsApiOptions.SectionName))
+    .Validate(o => !string.IsNullOrWhiteSpace(o.BaseUrl), "GroupsApi:BaseUrl is required");
+
+builder.Services.AddHttpClient<IGroupsApiClient, GroupsApiClient>();
 
 var app = builder.Build();
 

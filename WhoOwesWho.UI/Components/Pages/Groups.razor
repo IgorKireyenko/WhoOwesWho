@@ -1,0 +1,88 @@
+@page "/groups"
+@attribute [Authorize]
+@using WhoOwesWho.Common.Groups.Dto
+@using WhoOwesWho.UI.Components.Shared
+@using WhoOwesWho.UI.Groups
+@inject IGroupsApiClient GroupsApiClient
+
+<PageTitle>Groups</PageTitle>
+
+<div class="groups-page">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>My Groups</h1>
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="d-flex justify-content-center align-items-center" style="min-height: 200px;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    }
+    else if (!string.IsNullOrWhiteSpace(errorMessage))
+    {
+        <div class="alert alert-danger" role="alert">
+            <h4 class="alert-heading">Error</h4>
+            <p>@errorMessage</p>
+            <hr />
+            <button class="btn btn-outline-danger" @onclick="LoadGroupsAsync">Try Again</button>
+        </div>
+    }
+    else if (groups is null || groups.Count == 0)
+    {
+        <div class="alert alert-info" role="alert">
+            <h4 class="alert-heading">No groups yet</h4>
+            <p>You haven't created or joined any groups yet.</p>
+        </div>
+    }
+    else
+    {
+        <div class="groups-container">
+            @foreach (var group in groups)
+            {
+                <div class="group-card-wrapper">
+                    <GroupCard Group="group" />
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private List<GroupSummaryDto>? groups;
+    private bool isLoading = true;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadGroupsAsync();
+    }
+
+    private async Task LoadGroupsAsync()
+    {
+        isLoading = true;
+        errorMessage = null;
+
+        try
+        {
+            groups = await GroupsApiClient.GetAllGroupsAsync(CancellationToken.None);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            errorMessage = ex.Message;
+        }
+        catch (InvalidOperationException ex)
+        {
+            errorMessage = ex.Message;
+        }
+        catch (Exception)
+        {
+            errorMessage = "An unexpected error occurred while loading groups. Please try again later.";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+}
