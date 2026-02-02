@@ -17,6 +17,9 @@ builder.Services.AddSingleton<WhoOwesWho.Api.Auth.Services.ITokenService, WhoOwe
 builder.Services.AddScoped<WhoOwesWho.Api.Auth.Services.IAuthService, WhoOwesWho.Api.Auth.Services.AuthService>();
 builder.Services.AddSingleton<WhoOwesWho.Api.Data.DataSeeder>();
 
+builder.Services.AddSingleton<WhoOwesWho.Api.Groups.Repositories.IGroupRepository, WhoOwesWho.Api.Groups.Repositories.InMemoryGroupRepository>();
+builder.Services.AddScoped<WhoOwesWho.Api.Groups.Services.IGroupService, WhoOwesWho.Api.Groups.Services.GroupService>();
+
 builder.Services
     .AddAuthentication(Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
