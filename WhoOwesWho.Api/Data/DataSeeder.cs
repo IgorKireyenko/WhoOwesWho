@@ -39,13 +39,52 @@ public sealed class DataSeeder(
 
     private async Task SeedGroupsForUserAsync(Guid userId, CancellationToken cancellationToken)
     {
+        var youMemberId = Guid.NewGuid();
+        var alice = new Member { Id = Guid.NewGuid(), Name = "Alice" };
+        var bob = new Member { Id = Guid.NewGuid(), Name = "Bob" };
+        var charlie = new Member { Id = Guid.NewGuid(), Name = "Charlie" };
+
         var group1 = new Group
         {
             Id = Guid.NewGuid(),
             CreatorUserId = userId,
             Title = "Weekend Trip",
-            Members = [],
-            Payments = []
+            Members =
+            [
+                new Member { Id = youMemberId, Name = "You" },
+                alice,
+                bob
+            ],
+            Payments =
+            [
+                new Payment
+                {
+                    Id = Guid.NewGuid(),
+                    MemberId = youMemberId,
+                    MemberName = "You",
+                    Amount = 150.00m,
+                    PaymentDate = DateTime.UtcNow.AddDays(-2),
+                    Description = "Hotel booking"
+                },
+                new Payment
+                {
+                    Id = Guid.NewGuid(),
+                    MemberId = alice.Id,
+                    MemberName = alice.Name,
+                    Amount = 75.50m,
+                    PaymentDate = DateTime.UtcNow.AddDays(-1),
+                    Description = "Groceries"
+                },
+                new Payment
+                {
+                    Id = Guid.NewGuid(),
+                    MemberId = bob.Id,
+                    MemberName = bob.Name,
+                    Amount = 45.00m,
+                    PaymentDate = DateTime.UtcNow,
+                    Description = "Gas"
+                }
+            ]
         };
 
         var group2 = new Group
@@ -53,8 +92,42 @@ public sealed class DataSeeder(
             Id = Guid.NewGuid(),
             CreatorUserId = userId,
             Title = "Office Lunch",
-            Members = [],
-            Payments = []
+            Members =
+            [
+                new Member { Id = youMemberId, Name = "You" },
+                charlie,
+                alice
+            ],
+            Payments =
+            [
+                new Payment
+                {
+                    Id = Guid.NewGuid(),
+                    MemberId = charlie.Id,
+                    MemberName = charlie.Name,
+                    Amount = 32.50m,
+                    PaymentDate = DateTime.UtcNow.AddDays(-3),
+                    Description = "Pizza delivery"
+                },
+                new Payment
+                {
+                    Id = Guid.NewGuid(),
+                    MemberId = youMemberId,
+                    MemberName = "You",
+                    Amount = 28.75m,
+                    PaymentDate = DateTime.UtcNow.AddDays(-1),
+                    Description = "Coffee and snacks"
+                },
+                new Payment
+                {
+                    Id = Guid.NewGuid(),
+                    MemberId = alice.Id,
+                    MemberName = alice.Name,
+                    Amount = 41.00m,
+                    PaymentDate = DateTime.UtcNow,
+                    Description = "Sushi takeout"
+                }
+            ]
         };
 
         await groupRepository.AddAsync(group1, cancellationToken);
