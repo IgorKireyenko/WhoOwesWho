@@ -1,0 +1,30 @@
+@using WhoOwesWho.Common.Groups.Dto
+
+<div class="members-list-container">
+    <h3 class="section-title">Members</h3>
+    @if (Members is null || Members.Count == 0)
+    {
+        <div class="alert alert-info" role="alert">
+            <p class="mb-0">No members in this group yet.</p>
+        </div>
+    }
+    else
+    {
+        <div class="members-list">
+            @foreach (var member in Members)
+            {
+                <div class="member-item">
+                    <div class="member-avatar">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
+                    <span class="member-name">@member.Name</span>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public required List<MemberDto> Members { get; set; }
+}

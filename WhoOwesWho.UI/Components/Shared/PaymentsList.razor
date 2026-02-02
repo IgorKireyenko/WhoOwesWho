@@ -1,0 +1,43 @@
+@using WhoOwesWho.Common.Groups.Dto
+
+<div class="payments-list-container">
+    <h3 class="section-title">Payments</h3>
+    @if (Payments is null || Payments.Count == 0)
+    {
+        <div class="alert alert-info" role="alert">
+            <p class="mb-0">No payments recorded yet.</p>
+        </div>
+    }
+    else
+    {
+        <div class="payments-list">
+            @foreach (var payment in Payments)
+            {
+                <div class="payment-card">
+                    <div class="payment-header">
+                        <span class="payment-member">@payment.MemberName</span>
+                        <span class="payment-amount">@payment.Amount.ToString("C2")</span>
+                    </div>
+                    <div class="payment-details">
+                        <div class="payment-date">
+                            <i class="bi bi-calendar3"></i>
+                            <span>@payment.PaymentDate.ToString("MM/dd/yyyy")</span>
+                        </div>
+                        @if (!string.IsNullOrWhiteSpace(payment.Description))
+                        {
+                            <div class="payment-description">
+                                <i class="bi bi-file-text"></i>
+                                <span>@payment.Description</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public required List<PaymentDto> Payments { get; set; }
+}

@@ -9,12 +9,16 @@ namespace WhoOwesWho.UI.Groups;
 public interface IGroupsApiClient
 {
     Task<List<GroupSummaryDto>> GetAllGroupsAsync(CancellationToken cancellationToken);
+    Task<GroupDetailsResponseDto> GetGroupDetailsAsync(Guid groupId, CancellationToken cancellationToken);
 }
 
 public sealed class GroupsApiClient(HttpClient httpClient, IOptions<GroupsApiOptions> options, ITokenStore tokenStore) : IGroupsApiClient
 {
     public Task<List<GroupSummaryDto>> GetAllGroupsAsync(CancellationToken cancellationToken)
         => GetOrThrowAsync<List<GroupSummaryDto>>("api/groups", cancellationToken);
+
+    public Task<GroupDetailsResponseDto> GetGroupDetailsAsync(Guid groupId, CancellationToken cancellationToken)
+        => GetOrThrowAsync<GroupDetailsResponseDto>($"api/groups/{groupId}", cancellationToken);
 
     private async Task<TResponse> GetOrThrowAsync<TResponse>(string relativeUrl, CancellationToken cancellationToken)
     {
