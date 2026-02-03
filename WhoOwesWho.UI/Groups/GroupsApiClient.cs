@@ -13,6 +13,7 @@ public interface IGroupsApiClient
     Task<GroupDetailsResponseDto> GetGroupDetailsAsync(Guid groupId, CancellationToken cancellationToken);
     Task<AddMemberResponseDto> AddMemberAsync(Guid groupId, AddMemberRequestDto request, CancellationToken cancellationToken);
     Task<AddPaymentResponseDto> AddPaymentAsync(Guid groupId, AddPaymentRequestDto request, CancellationToken cancellationToken);
+    Task<List<DebtResponseDto>> GetGroupDebtsAsync(Guid groupId, CancellationToken cancellationToken);
 }
 
 public sealed class GroupsApiClient(HttpClient httpClient, IOptions<GroupsApiOptions> options, ITokenStore tokenStore) : IGroupsApiClient
@@ -31,6 +32,9 @@ public sealed class GroupsApiClient(HttpClient httpClient, IOptions<GroupsApiOpt
 
     public Task<AddPaymentResponseDto> AddPaymentAsync(Guid groupId, AddPaymentRequestDto request, CancellationToken cancellationToken)
         => PostOrThrowAsync<AddPaymentRequestDto, AddPaymentResponseDto>($"api/groups/{groupId}/payments", request, cancellationToken);
+
+    public Task<List<DebtResponseDto>> GetGroupDebtsAsync(Guid groupId, CancellationToken cancellationToken)
+        => GetOrThrowAsync<List<DebtResponseDto>>($"api/groups/{groupId}/debts", cancellationToken);
 
     private async Task<TResponse> GetOrThrowAsync<TResponse>(string relativeUrl, CancellationToken cancellationToken)
     {

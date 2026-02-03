@@ -1,0 +1,37 @@
+@using WhoOwesWho.Common.Groups.Dto
+
+<div class="debts-list-container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="section-title mb-0">Debts</h3>
+    </div>
+    @if (Debts is null || Debts.Count == 0)
+    {
+        <div class="alert alert-info" role="alert">
+            <p class="mb-0">No debts to settle</p>
+        </div>
+    }
+    else
+    {
+        <div class="debts-list">
+            @foreach (var debt in Debts)
+            {
+                <div class="debt-item">
+                    <div class="debt-icon">
+                        <i class="bi bi-arrow-right-circle"></i>
+                    </div>
+                    <div class="debt-content">
+                        <span class="debt-from">@debt.FromMemberName</span>
+                        <span class="debt-text">owes</span>
+                        <span class="debt-to">@debt.ToMemberName</span>
+                        <span class="debt-amount">$@debt.Amount.ToString("F2")</span>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public required List<DebtResponseDto> Debts { get; set; }
+}

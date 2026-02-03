@@ -202,6 +202,29 @@ public sealed class GroupsController(IGroupService groupService) : ControllerBas
         }
     }
 
+    [HttpGet("{groupId:guid}/debts")]
+    [ProducesResponseType(typeof(List<DebtResponseDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<List<DebtResponseDto>>> GetGroupDebts(Guid groupId, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var userId = GetAuthenticatedUserId();
+            var result = await groupService.GetGroupDebtsAsync(userId, groupId, cancellationToken);
+            return Ok(result);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, ex.Message);
+        }
+    }
+
     private Guid GetAuthenticatedUserId()
     {
         var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier)

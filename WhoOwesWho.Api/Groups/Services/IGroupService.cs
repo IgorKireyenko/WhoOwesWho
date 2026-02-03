@@ -12,4 +12,5 @@ public interface IGroupService
     Task RemoveMemberAsync(Guid userId, Guid groupId, Guid memberId, CancellationToken cancellationToken);
     Task<AddPaymentResponseDto> AddPaymentAsync(Guid userId, Guid groupId, AddPaymentRequestDto request, CancellationToken cancellationToken);
     Task RemovePaymentAsync(Guid userId, Guid groupId, Guid paymentId, CancellationToken cancellationToken);
+    Task<List<DebtResponseDto>> GetGroupDebtsAsync(Guid userId, Guid groupId, CancellationToken cancellationToken);
 }

@@ -1,0 +1,88 @@
+.debts-list-container {
+    border: 2px solid var(--wow-primary);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    background-color: white;
+    margin-bottom: 1.5rem;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--wow-primary);
+    margin-bottom: 1rem;
+}
+
+.debts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.debt-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    background-color: #f8f9fa;
+    transition: background-color 0.2s;
+}
+
+.debt-item:hover {
+    background-color: #e9ecef;
+}
+
+.debt-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background-color: var(--wow-primary);
+    color: white;
+    margin-right: 0.75rem;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.debt-content {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-size: 1rem;
+}
+
+.debt-from {
+    font-weight: 600;
+    color: #212529;
+}
+
+.debt-text {
+    color: #6c757d;
+}
+
+.debt-to {
+    font-weight: 600;
+    color: #212529;
+}
+
+.debt-amount {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--wow-primary);
+    margin-left: auto;
+}
+
+@media (max-width: 576px) {
+    .debt-content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .debt-amount {
+        margin-left: 0;
+    }
+}

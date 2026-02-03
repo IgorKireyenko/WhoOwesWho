@@ -40,49 +40,52 @@
         </div>
 
         <MembersList Members="groupDetails.Members" OnAddMember="NavigateToAddMember" />
+        <DebtsList Debts="debts" />
         <PaymentsList Payments="groupDetails.Payments" OnAddPayment="NavigateToAddPayment" />
     }
 </div>
 
 @code {
-    [Parameter]
-    public Guid Id { get; set; }
+[Parameter]
+public Guid Id { get; set; }
 
-    private GroupDetailsResponseDto? groupDetails;
-    private bool isLoading = true;
-    private string? errorMessage;
+private GroupDetailsResponseDto? groupDetails;
+private List<DebtResponseDto> debts = [];
+private bool isLoading = true;
+private string? errorMessage;
 
-    protected override async Task OnInitializedAsync()
+protected override async Task OnInitializedAsync()
+{
+    await LoadGroupDetailsAsync();
+}
+
+private async Task LoadGroupDetailsAsync()
+{
+    isLoading = true;
+    errorMessage = null;
+
+    try
     {
-        await LoadGroupDetailsAsync();
+        groupDetails = await GroupsApiClient.GetGroupDetailsAsync(Id, CancellationToken.None);
+        debts = await GroupsApiClient.GetGroupDebtsAsync(Id, CancellationToken.None);
     }
-
-    private async Task LoadGroupDetailsAsync()
+    catch (UnauthorizedAccessException ex)
     {
-        isLoading = true;
-        errorMessage = null;
-
-        try
-        {
-            groupDetails = await GroupsApiClient.GetGroupDetailsAsync(Id, CancellationToken.None);
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            errorMessage = ex.Message;
-        }
-        catch (InvalidOperationException ex)
-        {
-            errorMessage = ex.Message;
-        }
-        catch (Exception)
-        {
-            errorMessage = "An unexpected error occurred while loading group details. Please try again later.";
-        }
-        finally
-        {
-            isLoading = false;
-        }
+        errorMessage = ex.Message;
     }
+    catch (InvalidOperationException ex)
+    {
+        errorMessage = ex.Message;
+    }
+    catch (Exception)
+    {
+        errorMessage = "An unexpected error occurred while loading group details. Please try again later.";
+    }
+    finally
+    {
+        isLoading = false;
+    }
+}
 
     private void NavigateToGroups()
     {

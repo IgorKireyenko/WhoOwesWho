@@ -190,6 +190,108 @@ public sealed class GroupService(IGroupRepository groupRepository) : IGroupServi
         await groupRepository.UpdateAsync(group, cancellationToken);
     }
 
+    public async Task<List<DebtResponseDto>> GetGroupDebtsAsync(Guid userId, Guid groupId, CancellationToken cancellationToken)
+    {
+        var group = await GetGroupAndValidateOwnershipAsync(userId, groupId, cancellationToken);
+
+        if (group.Payments.Count == 0 || group.Members.Count == 0)
+        {
+            return [];
+        }
+
+        var memberBalances = CalculateMemberBalances(group);
+
+        var debts = MinimizeDebts(memberBalances, group.Members);
+
+        return debts;
+    }
+
+    private static Dictionary<Guid, decimal> CalculateMemberBalances(Group group)
+    {
+        var totalPaid = group.Members.ToDictionary(m => m.Id, _ => 0m);
+        
+        foreach (var payment in group.Payments)
+        {
+            if (totalPaid.ContainsKey(payment.MemberId))
+            {
+                totalPaid[payment.MemberId] += payment.Amount;
+            }
+        }
+
+        var totalGroupPayments = group.Payments.Sum(p => p.Amount);
+        var equalShare = Math.Round(totalGroupPayments / group.Members.Count, 2, MidpointRounding.AwayFromZero);
+
+        var balances = new Dictionary<Guid, decimal>();
+        foreach (var member in group.Members)
+        {
+            var netBalance = Math.Round(totalPaid[member.Id] - equalShare, 2, MidpointRounding.AwayFromZero);
+            if (netBalance != 0)
+            {
+                balances[member.Id] = netBalance;
+            }
+        }
+
+        return balances;
+    }
+
+    private static List<DebtResponseDto> MinimizeDebts(Dictionary<Guid, decimal> balances, List<Member> members)
+    {
+        var debts = new List<DebtResponseDto>();
+
+        var debtors = balances.Where(b => b.Value < 0)
+            .OrderBy(b => b.Value)
+            .Select(b => new { MemberId = b.Key, Amount = -b.Value })
+            .ToList();
+
+        var creditors = balances.Where(b => b.Value > 0)
+            .OrderByDescending(b => b.Value)
+            .Select(b => new { MemberId = b.Key, Amount = b.Value })
+            .ToList();
+
+        var debtorIndex = 0;
+        var creditorIndex = 0;
+
+        while (debtorIndex < debtors.Count && creditorIndex < creditors.Count)
+        {
+            var debtor = debtors[debtorIndex];
+            var creditor = creditors[creditorIndex];
+
+            var debtAmount = Math.Min(debtor.Amount, creditor.Amount);
+            debtAmount = Math.Round(debtAmount, 2, MidpointRounding.AwayFromZero);
+
+            if (debtAmount > 0.01m)
+            {
+                var debtorMember = members.First(m => m.Id == debtor.MemberId);
+                var creditorMember = members.First(m => m.Id == creditor.MemberId);
+
+                debts.Add(new DebtResponseDto(
+                    debtor.MemberId,
+                    debtorMember.Name,
+                    creditor.MemberId,
+                    creditorMember.Name,
+                    debtAmount));
+            }
+
+            debtor = debtor with { Amount = debtor.Amount - debtAmount };
+            creditor = creditor with { Amount = creditor.Amount - debtAmount };
+
+            debtors[debtorIndex] = debtor;
+            creditors[creditorIndex] = creditor;
+
+            if (debtor.Amount <= 0.01m)
+            {
+                debtorIndex++;
+            }
+
+            if (creditor.Amount <= 0.01m)
+            {
+                creditorIndex++;
+            }
+        }
+
+        return debts;
+    }
+
     private async Task<Group> GetGroupAndValidateOwnershipAsync(Guid userId, Guid groupId, CancellationToken cancellationToken)
     {
         var group = await groupRepository.GetByIdAsync(groupId, cancellationToken)
