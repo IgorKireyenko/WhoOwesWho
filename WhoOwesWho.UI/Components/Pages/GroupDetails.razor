@@ -40,7 +40,7 @@
         </div>
 
         <MembersList Members="groupDetails.Members" OnAddMember="NavigateToAddMember" />
-        <PaymentsList Payments="groupDetails.Payments" />
+        <PaymentsList Payments="groupDetails.Payments" OnAddPayment="NavigateToAddPayment" />
     }
 </div>
 
@@ -92,6 +92,11 @@
     private void NavigateToAddMember()
     {
         NavigationManager.NavigateTo($"/group/{Id}/members/new");
+    }
+
+    private void NavigateToAddPayment()
+    {
+        NavigationManager.NavigateTo($"/group/{Id}/payments/new");
     }
 }
 

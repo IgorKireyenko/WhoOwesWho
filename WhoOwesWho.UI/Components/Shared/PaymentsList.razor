@@ -1,8 +1,16 @@
 @using WhoOwesWho.Common.Groups.Dto
 
 <div class="payments-list-container">
-    <h3 class="section-title">Payments</h3>
-    @if (Payments is null || Payments.Count == 0)
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="section-title mb-0">Payments</h3>
+    @if (OnAddPayment.HasDelegate)
+    {
+        <button class="btn btn-primary btn-sm" @onclick="OnAddPayment">
+            <i class="bi bi-plus-circle"></i> Add payment
+        </button>
+    }
+</div>
+@if (Payments is null || Payments.Count == 0)
     {
         <div class="alert alert-info" role="alert">
             <p class="mb-0">No payments recorded yet.</p>
@@ -40,4 +48,7 @@
 @code {
     [Parameter, EditorRequired]
     public required List<PaymentDto> Payments { get; set; }
+
+    [Parameter]
+    public EventCallback OnAddPayment { get; set; }
 }

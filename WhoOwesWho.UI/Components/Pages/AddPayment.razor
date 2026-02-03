@@ -1,0 +1,206 @@
+@page "/group/{groupId:guid}/payments/new"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@using WhoOwesWho.Common.Groups.Dto
+@using WhoOwesWho.UI.Groups
+@inject IGroupsApiClient GroupsApiClient
+@inject NavigationManager NavigationManager
+
+<PageTitle>Add Payment</PageTitle>
+
+<div class="add-payment-page">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Add Payment</h1>
+        <button class="btn btn-outline-secondary" @onclick="NavigateToGroupDetails">
+            <i class="bi bi-arrow-left"></i> Back to Group Details
+        </button>
+    </div>
+
+    @if (isLoadingMembers)
+    {
+        <div class="d-flex justify-content-center align-items-center" style="min-height: 200px;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading members...</span>
+            </div>
+        </div>
+    }
+    else if (!string.IsNullOrWhiteSpace(errorMessage))
+    {
+        <div class="alert alert-danger" role="alert">
+            <h4 class="alert-heading">Error</h4>
+            <p>@errorMessage</p>
+        </div>
+    }
+    else
+    {
+        <div class="card">
+            <div class="card-body">
+                <EditForm Model="@formModel" OnValidSubmit="HandleValidSubmit">
+                    <DataAnnotationsValidator />
+
+                    <div class="mb-3">
+                        <label for="paidBy" class="form-label">Paid By</label>
+                        <InputSelect 
+                            id="paidBy" 
+                            class="form-select" 
+                            @bind-Value="formModel.MemberId">
+                            <option value="@Guid.Empty">-- Select Member --</option>
+                            @foreach (var member in members)
+                            {
+                                <option value="@member.Id">@member.Name</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => formModel.MemberId)" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="amount" class="form-label">Amount</label>
+                        <InputNumber 
+                            id="amount" 
+                            class="form-control" 
+                            @bind-Value="formModel.Amount" 
+                            placeholder="0.00"
+                            step="0.01" />
+                        <ValidationMessage For="@(() => formModel.Amount)" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="paymentDate" class="form-label">Payment Date</label>
+                        <InputDate 
+                            id="paymentDate" 
+                            class="form-control" 
+                            @bind-Value="formModel.PaymentDate" />
+                        <ValidationMessage For="@(() => formModel.PaymentDate)" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <InputTextArea 
+                            id="description" 
+                            class="form-control" 
+                            @bind-Value="formModel.Description" 
+                            placeholder="Enter payment description"
+                            rows="3"
+                            maxlength="256" />
+                        <ValidationMessage For="@(() => formModel.Description)" />
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary" disabled="@isSubmitting">
+                            @if (isSubmitting)
+                            {
+                                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                <span>Adding...</span>
+                            }
+                            else
+                            {
+                                <span>Add</span>
+                            }
+                        </button>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public Guid GroupId { get; set; }
+
+    private AddPaymentFormModel formModel = new();
+    private List<MemberDto> members = [];
+    private bool isLoadingMembers = true;
+    private bool isSubmitting = false;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadMembersAsync();
+    }
+
+    private async Task LoadMembersAsync()
+    {
+        isLoadingMembers = true;
+        errorMessage = null;
+
+        try
+        {
+            var groupDetails = await GroupsApiClient.GetGroupDetailsAsync(GroupId, CancellationToken.None);
+            members = groupDetails.Members;
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            errorMessage = ex.Message;
+        }
+        catch (InvalidOperationException ex)
+        {
+            errorMessage = ex.Message;
+        }
+        catch (Exception)
+        {
+            errorMessage = "An unexpected error occurred while loading members. Please try again later.";
+        }
+        finally
+        {
+            isLoadingMembers = false;
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        isSubmitting = true;
+        errorMessage = null;
+
+        try
+        {
+            var request = new AddPaymentRequestDto(
+                formModel.MemberId,
+                formModel.Amount,
+                formModel.PaymentDate,
+                formModel.Description);
+
+            await GroupsApiClient.AddPaymentAsync(GroupId, request, CancellationToken.None);
+            NavigationManager.NavigateTo($"/group/{GroupId}");
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            errorMessage = ex.Message;
+        }
+        catch (InvalidOperationException ex)
+        {
+            errorMessage = ex.Message;
+        }
+        catch (Exception)
+        {
+            errorMessage = "An unexpected error occurred while adding the payment. Please try again later.";
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+
+    private void NavigateToGroupDetails()
+    {
+        NavigationManager.NavigateTo($"/group/{GroupId}");
+    }
+
+    private class AddPaymentFormModel
+    {
+        [Required(ErrorMessage = "Please select a member")]
+        [Range(typeof(Guid), "00000001-0000-0000-0000-000000000000", "ffffffff-ffff-ffff-ffff-ffffffffffff", ErrorMessage = "Please select a member")]
+        public Guid MemberId { get; set; }
+
+        [Required(ErrorMessage = "Amount is required.")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "Amount must be greater than 0.")]
+        public decimal Amount { get; set; }
+
+        [Required(ErrorMessage = "Payment date is required.")]
+        public DateTime PaymentDate { get; set; } = DateTime.Today;
+
+        [Required(ErrorMessage = "Description is required.")]
+        [StringLength(256, MinimumLength = 1, ErrorMessage = "Description must be between 1 and 256 characters.")]
+        public string Description { get; set; } = string.Empty;
+    }
+}
