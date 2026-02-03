@@ -1,7 +1,15 @@
 @using WhoOwesWho.Common.Groups.Dto
 
 <div class="members-list-container">
-    <h3 class="section-title">Members</h3>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="section-title mb-0">Members</h3>
+        @if (OnAddMember.HasDelegate)
+        {
+            <button class="btn btn-sm btn-primary" @onclick="OnAddMember">
+                <i class="bi bi-plus-circle me-1"></i> Add member
+            </button>
+        }
+    </div>
     @if (Members is null || Members.Count == 0)
     {
         <div class="alert alert-info" role="alert">
@@ -27,4 +35,7 @@
 @code {
     [Parameter, EditorRequired]
     public required List<MemberDto> Members { get; set; }
+
+    [Parameter]
+    public EventCallback OnAddMember { get; set; }
 }

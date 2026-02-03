@@ -39,7 +39,7 @@
             </button>
         </div>
 
-        <MembersList Members="groupDetails.Members" />
+        <MembersList Members="groupDetails.Members" OnAddMember="NavigateToAddMember" />
         <PaymentsList Payments="groupDetails.Payments" />
     }
 </div>
@@ -88,4 +88,10 @@
     {
         NavigationManager.NavigateTo("/groups");
     }
+
+    private void NavigateToAddMember()
+    {
+        NavigationManager.NavigateTo($"/group/{Id}/members/new");
+    }
 }
+

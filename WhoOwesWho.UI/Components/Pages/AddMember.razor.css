@@ -1,0 +1,35 @@
+.add-member-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.add-member-page h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #212529;
+}
+
+.add-member-page .card {
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.add-member-page .card-body {
+    padding: 2rem;
+}
+
+@media (max-width: 768px) {
+    .add-member-page {
+        padding: 1rem 0.5rem;
+    }
+
+    .add-member-page h1 {
+        font-size: 1.5rem;
+    }
+
+    .add-member-page .card-body {
+        padding: 1.5rem;
+    }
+}
