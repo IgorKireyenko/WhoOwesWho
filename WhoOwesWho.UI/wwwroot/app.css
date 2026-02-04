@@ -7,6 +7,13 @@ h1:focus {
     --wow-primary-hover: #4a25a0;
 }
 
+.title-underline {
+    width: 100%;
+    height: 3px;
+    background-color: var(--wow-primary);
+    margin-bottom: 1rem;
+}
+
 .valid.modified:not([type=checkbox]) {
     outline: 1px solid #26b050;
 }
