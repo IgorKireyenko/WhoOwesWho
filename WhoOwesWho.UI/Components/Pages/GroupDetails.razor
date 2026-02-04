@@ -32,11 +32,16 @@
     }
     else if (groupDetails is not null)
     {
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-stretch align-items-md-center gap-3 mb-4">
             <h1>@groupDetails.Title</h1>
-            <button class="btn btn-outline-secondary" @onclick="NavigateToGroups">
-                <i class="bi bi-arrow-left"></i> Back to Groups
-            </button>
+            <div class="d-flex flex-column flex-md-row gap-2">
+                <button class="btn btn-outline-secondary" @onclick="NavigateToGroups">
+                    <i class="bi bi-arrow-left"></i> Back to Groups
+                </button>
+                <button class="btn btn-danger" @onclick="ShowRemoveGroupModal">
+                    <i class="bi bi-trash"></i> Remove Group
+                </button>
+            </div>
         </div>
 
         <MembersList Members="groupDetails.Members" 
@@ -49,6 +54,11 @@
     }
 </div>
 
+<ConfirmationModal @ref="removeGroupModal"
+                   Title="Remove Group"
+                   Message="Are you really sure you want to remove this group?"
+                   OnConfirm="HandleRemoveGroupAsync" />
+
 @code {
 [Parameter]
 public Guid Id { get; set; }
@@ -57,6 +67,7 @@ private GroupDetailsResponseDto? groupDetails;
 private List<DebtResponseDto> debts = [];
 private bool isLoading = true;
 private string? errorMessage;
+private ConfirmationModal removeGroupModal = null!;
 
 protected override async Task OnInitializedAsync()
 {
@@ -116,6 +127,17 @@ private async Task LoadGroupDetailsAsync()
     {
         await GroupsApiClient.RemovePaymentAsync(Id, paymentId, CancellationToken.None);
         await LoadGroupDetailsAsync();
+    }
+
+    private void ShowRemoveGroupModal()
+    {
+        removeGroupModal.Show();
+    }
+
+    private async Task HandleRemoveGroupAsync()
+    {
+        await GroupsApiClient.DeleteGroupAsync(Id, CancellationToken.None);
+        NavigationManager.NavigateTo("/groups");
     }
 }
 
