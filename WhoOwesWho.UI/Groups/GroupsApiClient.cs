@@ -12,7 +12,9 @@ public interface IGroupsApiClient
     Task<List<GroupSummaryDto>> GetAllGroupsAsync(CancellationToken cancellationToken);
     Task<GroupDetailsResponseDto> GetGroupDetailsAsync(Guid groupId, CancellationToken cancellationToken);
     Task<AddMemberResponseDto> AddMemberAsync(Guid groupId, AddMemberRequestDto request, CancellationToken cancellationToken);
+    Task RemoveMemberAsync(Guid groupId, Guid memberId, CancellationToken cancellationToken);
     Task<AddPaymentResponseDto> AddPaymentAsync(Guid groupId, AddPaymentRequestDto request, CancellationToken cancellationToken);
+    Task RemovePaymentAsync(Guid groupId, Guid paymentId, CancellationToken cancellationToken);
     Task<List<DebtResponseDto>> GetGroupDebtsAsync(Guid groupId, CancellationToken cancellationToken);
 }
 
@@ -30,8 +32,14 @@ public sealed class GroupsApiClient(HttpClient httpClient, IOptions<GroupsApiOpt
     public Task<AddMemberResponseDto> AddMemberAsync(Guid groupId, AddMemberRequestDto request, CancellationToken cancellationToken)
         => PostOrThrowAsync<AddMemberRequestDto, AddMemberResponseDto>($"api/groups/{groupId}/members", request, cancellationToken);
 
+    public Task RemoveMemberAsync(Guid groupId, Guid memberId, CancellationToken cancellationToken)
+        => DeleteOrThrowAsync($"api/groups/{groupId}/members/{memberId}", cancellationToken);
+
     public Task<AddPaymentResponseDto> AddPaymentAsync(Guid groupId, AddPaymentRequestDto request, CancellationToken cancellationToken)
         => PostOrThrowAsync<AddPaymentRequestDto, AddPaymentResponseDto>($"api/groups/{groupId}/payments", request, cancellationToken);
+
+    public Task RemovePaymentAsync(Guid groupId, Guid paymentId, CancellationToken cancellationToken)
+        => DeleteOrThrowAsync($"api/groups/{groupId}/payments/{paymentId}", cancellationToken);
 
     public Task<List<DebtResponseDto>> GetGroupDebtsAsync(Guid groupId, CancellationToken cancellationToken)
         => GetOrThrowAsync<List<DebtResponseDto>>($"api/groups/{groupId}/debts", cancellationToken);
@@ -69,6 +77,27 @@ public sealed class GroupsApiClient(HttpClient httpClient, IOptions<GroupsApiOpt
         {
             var payload = await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken: cancellationToken);
             return payload ?? throw new InvalidOperationException("The server returned an empty response.");
+        }
+
+        var error = await response.Content.ReadAsStringAsync(cancellationToken);
+        if (string.IsNullOrWhiteSpace(error))
+        {
+            error = $"Request failed ({(int)response.StatusCode} {response.ReasonPhrase}).";
+        }
+
+        throw new InvalidOperationException(error);
+    }
+
+    private async Task DeleteOrThrowAsync(string relativeUrl, CancellationToken cancellationToken)
+    {
+        EnsureConfigured();
+        await EnsureAuthenticatedAsync(cancellationToken);
+
+        using var response = await httpClient.DeleteAsync(relativeUrl, cancellationToken);
+
+        if (response.IsSuccessStatusCode)
+        {
+            return;
         }
 
         var error = await response.Content.ReadAsStringAsync(cancellationToken);

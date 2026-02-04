@@ -26,16 +26,52 @@
                         <i class="bi bi-person-fill"></i>
                     </div>
                     <span class="member-name">@member.Name</span>
+                    @if (OnRemoveMember.HasDelegate && !IsAuthenticatedUser(member.Name))
+                    {
+                        <button class="btn btn-sm btn-outline-danger ms-auto" @onclick="() => ShowRemoveConfirmation(member)">
+                            <i class="bi bi-trash"></i> Remove
+                        </button>
+                    }
                 </div>
             }
         </div>
     }
 </div>
 
+<ConfirmationModal @ref="confirmationModal" 
+                   Title="Remove Member" 
+                   Message="Are you really sure you want to remove this item?" 
+                   OnConfirm="HandleRemoveMemberAsync" />
+
 @code {
+    private const string AuthenticatedUserMemberName = "You";
+
     [Parameter, EditorRequired]
     public required List<MemberDto> Members { get; set; }
 
     [Parameter]
     public EventCallback OnAddMember { get; set; }
+
+    [Parameter]
+    public EventCallback<Guid> OnRemoveMember { get; set; }
+
+    private ConfirmationModal? confirmationModal;
+    private Guid memberToRemove;
+
+    private bool IsAuthenticatedUser(string memberName) => 
+        memberName.Equals(AuthenticatedUserMemberName, StringComparison.OrdinalIgnoreCase);
+
+    private void ShowRemoveConfirmation(MemberDto member)
+    {
+        memberToRemove = member.Id;
+        confirmationModal?.Show();
+    }
+
+    private async Task HandleRemoveMemberAsync()
+    {
+        if (OnRemoveMember.HasDelegate)
+        {
+            await OnRemoveMember.InvokeAsync(memberToRemove);
+        }
+    }
 }

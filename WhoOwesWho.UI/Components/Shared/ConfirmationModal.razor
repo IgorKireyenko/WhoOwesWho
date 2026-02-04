@@ -1,0 +1,93 @@
+@if (isVisible)
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@Title</h5>
+                    <button type="button" class="btn-close" @onclick="Cancel" aria-label="Close" disabled="@isProcessing"></button>
+                </div>
+                <div class="modal-body">
+                    @if (!string.IsNullOrWhiteSpace(errorMessage))
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            @errorMessage
+                        </div>
+                    }
+                    <p>@Message</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="Cancel" disabled="@isProcessing">
+                        Cancel
+                    </button>
+                    <button type="button" class="btn btn-danger" @onclick="ConfirmAsync" disabled="@isProcessing">
+                        @if (isProcessing)
+                        {
+                            <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                        }
+                        Confirm
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
+@code {
+    [Parameter]
+    public string Title { get; set; } = "Confirm Action";
+
+    [Parameter]
+    public string Message { get; set; } = "Are you really sure you want to remove this item?";
+
+    [Parameter]
+    public EventCallback OnConfirm { get; set; }
+
+    private bool isVisible;
+    private bool isProcessing;
+    private string? errorMessage;
+
+    public void Show()
+    {
+        isVisible = true;
+        isProcessing = false;
+        errorMessage = null;
+        StateHasChanged();
+    }
+
+    public void Hide()
+    {
+        isVisible = false;
+        isProcessing = false;
+        errorMessage = null;
+        StateHasChanged();
+    }
+
+    private async Task ConfirmAsync()
+    {
+        isProcessing = true;
+        errorMessage = null;
+        StateHasChanged();
+
+        try
+        {
+            await OnConfirm.InvokeAsync();
+            Hide();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+            isProcessing = false;
+            StateHasChanged();
+        }
+    }
+
+    private void Cancel()
+    {
+        if (!isProcessing)
+        {
+            Hide();
+        }
+    }
+}

@@ -39,11 +39,24 @@
                             </div>
                         }
                     </div>
+                    @if (OnRemovePayment.HasDelegate)
+                    {
+                        <div class="payment-actions mt-3">
+                            <button class="btn btn-sm btn-outline-danger" @onclick="() => ShowRemoveConfirmation(payment)">
+                                <i class="bi bi-trash"></i> Remove
+                            </button>
+                        </div>
+                    }
                 </div>
             }
         </div>
     }
 </div>
+
+<ConfirmationModal @ref="confirmationModal" 
+                   Title="Remove Payment" 
+                   Message="Are you really sure you want to remove this item?" 
+                   OnConfirm="HandleRemovePaymentAsync" />
 
 @code {
     [Parameter, EditorRequired]
@@ -51,4 +64,24 @@
 
     [Parameter]
     public EventCallback OnAddPayment { get; set; }
+
+    [Parameter]
+    public EventCallback<Guid> OnRemovePayment { get; set; }
+
+    private ConfirmationModal? confirmationModal;
+    private Guid paymentToRemove;
+
+    private void ShowRemoveConfirmation(PaymentDto payment)
+    {
+        paymentToRemove = payment.Id;
+        confirmationModal?.Show();
+    }
+
+    private async Task HandleRemovePaymentAsync()
+    {
+        if (OnRemovePayment.HasDelegate)
+        {
+            await OnRemovePayment.InvokeAsync(paymentToRemove);
+        }
+    }
 }

@@ -39,9 +39,13 @@
             </button>
         </div>
 
-        <MembersList Members="groupDetails.Members" OnAddMember="NavigateToAddMember" />
+        <MembersList Members="groupDetails.Members" 
+                     OnAddMember="NavigateToAddMember" 
+                     OnRemoveMember="HandleRemoveMemberAsync" />
         <DebtsList Debts="debts" />
-        <PaymentsList Payments="groupDetails.Payments" OnAddPayment="NavigateToAddPayment" />
+        <PaymentsList Payments="groupDetails.Payments" 
+                      OnAddPayment="NavigateToAddPayment" 
+                      OnRemovePayment="HandleRemovePaymentAsync" />
     }
 </div>
 
@@ -100,6 +104,18 @@ private async Task LoadGroupDetailsAsync()
     private void NavigateToAddPayment()
     {
         NavigationManager.NavigateTo($"/group/{Id}/payments/new");
+    }
+
+    private async Task HandleRemoveMemberAsync(Guid memberId)
+    {
+        await GroupsApiClient.RemoveMemberAsync(Id, memberId, CancellationToken.None);
+        await LoadGroupDetailsAsync();
+    }
+
+    private async Task HandleRemovePaymentAsync(Guid paymentId)
+    {
+        await GroupsApiClient.RemovePaymentAsync(Id, paymentId, CancellationToken.None);
+        await LoadGroupDetailsAsync();
     }
 }
 
