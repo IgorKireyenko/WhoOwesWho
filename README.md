@@ -915,7 +915,7 @@ Before implementation, ask any necessary clarification questions.
 
 - Starting a brand-new project is more challenging than working in an existing codebase. With limited context, you need to provide more detail in the prompt and express your intent clearly to get the result you actually want.
 - Adding the line "Before implementation, ask any necessary clarification questions." is very helpful: it reduces missed requirements and saves time because the AI won't assume defaults.
-- It's worth refreshing/updating the agent instructions whenever you add new libraries, change your approach, or introduce new projects—more context consistently improves the outcome.
+- It's worth refreshing/updating the agent instructions whenever you add new libraries, change your approach, or introduce new projects - more context consistently improves the outcome.
 - For me, Copilot works best on backend tasks and often produces comprehensive results with minimal follow-up.
 - For Blazor, it often makes small mistakes (e.g., missing `using`s, forgetting form `Name`s, etc.), so the code needs more careful review.
 - Copilot tends to be most reliable for common topics (API creation, Clean Architecture suggestions) and less reliable for more specific areas (authentication, Blazor UI ↔ API integration).
