@@ -25,12 +25,6 @@
             <ValidationSummary class="mb-3" />
 
             <div class="mb-3">
-                <label class="form-label" for="fullName">Full name</label>
-                <InputText id="fullName" class="form-control" @bind-Value="Model.FullName" autocomplete="name" />
-                <ValidationMessage For="() => Model.FullName" />
-            </div>
-
-            <div class="mb-3">
                 <label class="form-label" for="email">Email</label>
                 <InputText id="email" class="form-control" @bind-Value="Model.Email" autocomplete="email" inputmode="email" />
                 <ValidationMessage For="() => Model.Email" />
@@ -86,10 +80,6 @@
 
     public sealed class SignupModel
     {
-        [Required]
-        [MinLength(2)]
-        public string FullName { get; set; } = string.Empty;
-
         [Required]
         [EmailAddress]
         public string Email { get; set; } = string.Empty;
