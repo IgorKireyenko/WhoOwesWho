@@ -89,8 +89,9 @@ Confirmation screen shown before signing out.
 
 ## Technical notes
 
-- Backend: ASP.NET Core Web API (.NET 10), controllers + OpenAPI in Development.
+- Backend: ASP.NET Core Web API (.NET 10), controllers.
 - Frontend: Blazor Server (.NET 10) using Razor Components (interactive server render mode) and Bootstrap 5.3.
+- Common: `WhoOwesWho.Common` class library containing shared DTOs.
 - Tests: separate test projects for API and UI under `Tests/`.
 
 This project was created with heavy AI assistance (more than 90% of the code/content was generated with AI), while the programmer focused primarily on prompting, reviewing, debugging, and verifying the results.
