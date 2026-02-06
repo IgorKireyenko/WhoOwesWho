@@ -109,11 +109,7 @@ AI models (picked depending on task complexity and whether it was backend or fro
 - Claude Sonnet 4.5
 - ChatGPT 4.1
 
-
 ## Prompts
-
-<details>
-<summary><strong>Prompts</strong></summary>
 
 <details>
 <summary><strong>Implement a simple JWT-based authentication API</strong></summary>
@@ -914,15 +910,12 @@ Before implementation, ask any necessary clarification questions.
 •	Tests should live in WhoOwesWho.Api.Tests project. Before implementation, ask any necessary clarification questions.
 </details>
 
-</details>
-
 ## Insights
 
-1. Starting a brand-new project is more challenging than working in an existing codebase. With limited context, you need to provide more detail in the prompt and express your intent clearly to get the result you actually want.
-2. Adding the line "Before implementation, ask any necessary clarification questions." is very helpful: it reduces missed requirements and saves time because the AI won’t assume defaults.
-3. It’s worth refreshing/updating the agent instructions whenever you add new libraries, change your approach, or introduce new projects—more context consistently improves the outcome.
-4. For me, Copilot works best on backend tasks and often produces comprehensive results with minimal follow-up.
-5. For Blazor, it often makes small mistakes (e.g., missing `using`s, forgetting form `Name`s, etc.), so the code needs more careful review.
-6. Copilot tends to be most reliable for common topics (API creation, Clean Architecture suggestions) and less reliable for more specific areas (authentication, Blazor UI ↔ API integration).
-7. There’s no real reason to use a 1.x model for “simple” operations just to save money.
-
+- Starting a brand-new project is more challenging than working in an existing codebase. With limited context, you need to provide more detail in the prompt and express your intent clearly to get the result you actually want.
+- Adding the line "Before implementation, ask any necessary clarification questions." is very helpful: it reduces missed requirements and saves time because the AI won't assume defaults.
+- It's worth refreshing/updating the agent instructions whenever you add new libraries, change your approach, or introduce new projects—more context consistently improves the outcome.
+- For me, Copilot works best on backend tasks and often produces comprehensive results with minimal follow-up.
+- For Blazor, it often makes small mistakes (e.g., missing `using`s, forgetting form `Name`s, etc.), so the code needs more careful review.
+- Copilot tends to be most reliable for common topics (API creation, Clean Architecture suggestions) and less reliable for more specific areas (authentication, Blazor UI ↔ API integration).
+- There's no real reason to use a 1.x model for “simple” operations just to save money.
